@@ -9,3 +9,108 @@ datasource db {
 generator client {
   provider = "prisma-client-js"
 }
+
+model Category {
+  id            Int           @id @default(autoincrement())
+  name          String        @db.VarChar(45)
+  createdAt     DateTime      @default(now()) @map("created_at")
+  SubCategories SubCategory[]
+
+  @@map("categories")
+}
+
+model SubCategory {
+  id         Int       @id @default(autoincrement())
+  name       String    @db.VarChar(45)
+  categoryId Int       @map("category_id")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  categories Category  @relation(fields: [categoryId], references: [id])
+  projects   Project[]
+
+  @@map("sub_categories")
+}
+
+model Project {
+  id              Int           @id @default(autoincrement())
+  name            String        @db.VarChar(100)
+  openDate        DateTime      @map("open_date")
+  endDate         DateTime      @map("end_date")
+  achievedAmount  Decimal       @map("achieved_amount") @db.Decimal(11, 2)
+  goalAmount      Decimal       @map("goal_amount") @db.Decimal(11, 2)
+  achievementRate Decimal       @map("achievement_rate") @db.Decimal(8, 4)
+  paymentDate     DateTime      @map("payment_date")
+  summary         String        @db.VarChar(300)
+  description     String        @db.MediumText
+  subCategoryId   Int           @map("sub_category_id")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  subCategories   SubCategory   @relation(fields: [subCategoryId], references: [id])
+  images          Image[]
+  usersProjects   UserProject[]
+  likes           Like[]
+
+  @@map("projects")
+}
+
+model Image {
+  id                  Int      @id @default(autoincrement())
+  projectThumbnailUrl String   @map("project_thumbnail_url") @db.VarChar(2000)
+  detailImageUrl      String   @map("detail_image_url") @db.VarChar(2000)
+  projectId           Int      @map("project_id")
+  createdAt           DateTime @default(now()) @map("created_at")
+  projects            Project  @relation(fields: [projectId], references: [id])
+
+  @@map("images")
+}
+
+model User {
+  id               Int           @id @default(autoincrement())
+  nickname         String        @db.VarChar(45)
+  email            String        @db.VarChar(200)
+  password         String        @db.VarChar(80)
+  profileImageUrl  String?       @map("profile_image_url") @db.VarChar(2000)
+  userIntroduction String?       @map("user_introduction") @db.VarChar(1000)
+  socialPlatform   String?       @map("social_platform") @db.VarChar(45)
+  createdAt        DateTime      @default(now()) @map("created_at")
+  usersProjects    UserProject[]
+  likes            Like[]
+
+  @@map("users")
+}
+
+model UserProject {
+  id            Int       @id @default(autoincrement())
+  projectId     Int       @map("project_id")
+  usersId       Int       @map("user_id")
+  optionId      Int       @map("option_id")
+  pledgeDate    DateTime? @map("pledge_date")
+  accountNumber String?   @map("account_number") @db.VarChar(45)
+  createdAt     DateTime  @default(now()) @map("created_at")
+  projects      Project   @relation(fields: [projectId], references: [id])
+  users         User      @relation(fields: [usersId], references: [id])
+  option        Option    @relation(fields: [optionId], references: [id])
+
+  @@map("users_projects")
+}
+
+model Like {
+  id        Int      @id @default(autoincrement())
+  userId    Int?     @map("user_id")
+  projectId Int?     @map("project_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  project   Project? @relation(fields: [projectId], references: [id])
+  user      User?    @relation(fields: [userId], references: [id])
+
+  @@map("likes")
+}
+
+model Option {
+  id            Int           @id @default(autoincrement())
+  optionName    String        @map("option_name") @db.VarChar(500)
+  optionDetail  String        @map("option_detail") @db.VarChar(1000)
+  price         Decimal       @db.Decimal(9, 2)
+  stock         Int
+  createdAt     DateTime      @default(now()) @map("created_at")
+  usersProjects UserProject[]
+
+  @@map("options")
+}
