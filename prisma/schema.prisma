@@ -11,25 +11,14 @@ generator client {
 }
 
 model Category {
-  id        Int      @id @default(autoincrement())
-  name      String   @db.VarChar(45)
-  createdAt DateTime @default(now()) @map("created_at")
+  id          Int      @id @default(autoincrement())
+  koreanName  String   @map("korean_name") @db.VarChar(45)
+  englishName String   @map("english_name") @db.VarChar(45)
+  createdAt   DateTime @default(now()) @map("created_at")
 
-  subCategories SubCategory[]
+  project Project[]
 
   @@map("categories")
-}
-
-model SubCategory {
-  id         Int      @id @default(autoincrement())
-  name       String   @db.VarChar(45)
-  categoryId Int      @map("category_id")
-  createdAt  DateTime @default(now()) @map("created_at")
-
-  categories Category  @relation(fields: [categoryId], references: [id])
-  projects   Project[]
-
-  @@map("sub_categories")
 }
 
 model Project {
@@ -42,12 +31,12 @@ model Project {
   paymentDate    DateTime @map("payment_date")
   summary        String   @db.VarChar(300)
   description    String   @db.MediumText
-  subCategoryId  Int      @map("sub_category_id")
+  categoryId     Int      @map("category_id")
   creatorId      Int      @map("creator_id")
   createdAt      DateTime @default(now()) @map("created_at")
 
-  subCategories SubCategory @relation(fields: [subCategoryId], references: [id])
-  creators      Creator     @relation(fields: [creatorId], references: [id])
+  categories Category @relation(fields: [categoryId], references: [id])
+  creators   Creator  @relation(fields: [creatorId], references: [id])
 
   images  Image[]
   likes   Like[]
@@ -71,7 +60,7 @@ model Image {
 model User {
   id               Int      @id @default(autoincrement())
   nickname         String   @db.VarChar(45)
-  email            String   @db.VarChar(200)
+  email            String   @unique @db.VarChar(200)
   password         String   @db.VarChar(80)
   profileImageUrl  String?  @map("profile_image_url") @db.VarChar(2000)
   userIntroduction String?  @map("user_introduction") @db.VarChar(1000)
