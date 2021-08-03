@@ -71,9 +71,9 @@ model Image {
 
 model User {
   id               Int      @id @default(autoincrement())
-  nickname         String   @db.VarChar(45)
+  nickname         String?  @db.VarChar(45)
   email            String   @unique @db.VarChar(200)
-  password         String   @db.VarChar(80)
+  password         String?  @db.VarChar(80)
   profileImageUrl  String?  @map("profile_image_url") @db.VarChar(2000)
   userIntroduction String?  @map("user_introduction") @db.VarChar(1000)
   socialPlatform   String?  @map("social_platform") @db.VarChar(45)
