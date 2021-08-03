@@ -16,9 +16,19 @@ model Category {
   englishName String   @map("english_name") @db.VarChar(45)
   createdAt   DateTime @default(now()) @map("created_at")
 
-  project Project[]
+  projects Project[]
 
   @@map("categories")
+}
+
+model Status {
+  id        Int      @id @default(autoincrement())
+  status    String   @db.VarChar(20)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  projects Project[]
+
+  @@map("statuses")
 }
 
 model Project {
@@ -33,10 +43,12 @@ model Project {
   description    String   @db.MediumText
   categoryId     Int      @map("category_id")
   creatorId      Int      @map("creator_id")
+  statusId       Int      @map("status_id")
   createdAt      DateTime @default(now()) @map("created_at")
 
   categories Category @relation(fields: [categoryId], references: [id])
   creators   Creator  @relation(fields: [creatorId], references: [id])
+  statuses   Status   @relation(fields: [statusId], references: [id])
 
   images  Image[]
   likes   Like[]
