@@ -1,4 +1,5 @@
 import request from 'supertest';
+import bcrypt from 'bcrypt';
 import app from '../app';
 import prisma from '../prisma';
 import { users } from './data/user';
@@ -48,6 +49,10 @@ describe('testUserLogIn', () => {
   beforeAll(async () => {
     await Promise.all(
       users.map(async (user) => {
+        const saltRounds = 10;
+        const salt = await bcrypt.genSalt(saltRounds);
+        const hashedPw = await bcrypt.hash(user.password, salt);
+        user.password = hashedPw;
         await prisma.user.create({
           data: user,
         });
@@ -56,11 +61,14 @@ describe('testUserLogIn', () => {
   });
 
   test('testLogInAndGetRightToken', async () => {
-    const res = await request(app).post('/user/login').send({
-      email: 'nakha',
-      password: 'future',
-    });
-    expect(res.status).toBe(200);
+    const res = await request(app)
+      .post('/user/login')
+      .send({
+        email: 'nakha',
+        password: 'future',
+      })
+      .expect(200);
+
     expect(res.body.accessToken).toMatch('eyJhbGci');
     expect(res.body.message).toBe('LOGIN_SUCCESS');
   });
