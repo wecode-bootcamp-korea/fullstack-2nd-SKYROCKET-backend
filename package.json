@@ -35,8 +35,8 @@
   "scripts": {
     "start": "nodemon --exec babel-node server.js",
     "data": "babel-node dataUploader/readData.js",
-    "development": "cat .env.development > .env && nodemon --exec babel-node server.js",
-    "test": "cat .env.test > .env && npx prisma migrate reset -f && jest --detectOpenHandles"
+    "dev": "cat .env.development > .env && nodemon --exec babel-node server.js",
+    "test": "cat .env.test > .env && npx prisma migrate reset -f && jest --detectOpenHandles --verbose"
   },
   "author": "",
   "license": "ISC"
