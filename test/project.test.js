@@ -917,3 +917,94 @@ describe('TestListAPI', () => {
     prisma.$disconnect();
   });
 });
+
+describe('TestCategoryAPI', () => {
+  beforeAll(async () => {
+    await Promise.all(
+      categories.map(async (category) => {
+        await prisma.category.create({
+          data: category,
+        });
+      })
+    );
+  });
+
+  describe('Category', () => {
+    test('successGetCategory', (done) => {
+      request(app)
+        .get('/project/category')
+        .set('Accept', 'application/json')
+        .expect(200, {
+          message: 'SUCCESS_GET_CATEGORIES',
+          categories: [
+            {
+              id: 1,
+              category: {
+                koreanName: '게임',
+                englishName: 'game',
+              },
+            },
+            {
+              id: 2,
+              category: {
+                koreanName: '패션',
+                englishName: 'fashion',
+              },
+            },
+            {
+              id: 3,
+              category: {
+                koreanName: '음악',
+                englishName: 'music',
+              },
+            },
+          ],
+        })
+        .end(done);
+    });
+  });
+
+  afterAll(async () => {
+    await prisma.category.deleteMany();
+    prisma.$disconnect();
+  });
+});
+
+describe('TestStatusAPI', () => {
+  beforeAll(async () => {
+    await Promise.all(
+      statuses.map(async (status) => {
+        await prisma.status.create({
+          data: status,
+        });
+      })
+    );
+  });
+
+  describe('Status', () => {
+    test('successGetStatus', (done) => {
+      request(app)
+        .get('/project/status')
+        .set('Accept', 'application/json')
+        .expect(200, {
+          message: 'SUCCESS_GET_STATUSES',
+          statuses: [
+            {
+              id: 1,
+              status: '진행중인 프로젝트',
+            },
+            {
+              id: 2,
+              status: '종료된 프로젝트',
+            },
+          ],
+        })
+        .end(done);
+    });
+  });
+
+  afterAll(async () => {
+    await prisma.status.deleteMany();
+    prisma.$disconnect();
+  });
+});
