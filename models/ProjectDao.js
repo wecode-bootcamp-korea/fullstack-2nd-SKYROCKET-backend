@@ -83,4 +83,35 @@ const getStatusId = async (statusId) => {
   });
 };
 
-export default { getProjects, getCategoryId, getStatusId };
+const getAllCategories = async () => {
+  return await prisma.category.findMany({
+    select: {
+      id: true,
+      koreanName: true,
+      englishName: true,
+    },
+    orderBy: {
+      id: 'asc',
+    },
+  });
+};
+
+const getAllStatuses = async () => {
+  return await prisma.status.findMany({
+    select: {
+      id: true,
+      status: true,
+    },
+    orderBy: {
+      id: 'asc',
+    },
+  });
+};
+
+export default {
+  getProjects,
+  getCategoryId,
+  getStatusId,
+  getAllCategories,
+  getAllStatuses,
+};

@@ -58,4 +58,20 @@ const findProjects = async (offset, limit, categoryId, statusId) => {
   );
 };
 
-export default { findProjects };
+const findAllCategories = async () => {
+  const categories = await ProjectDao.getAllCategories();
+
+  return categories.reduce((results, item, index) => {
+    results[index] = {
+      id: item.id,
+      category: { koreanName: item.koreanName, englishName: item.englishName },
+    };
+    return results;
+  }, []);
+};
+
+const findAllStatuses = async () => {
+  return await ProjectDao.getAllStatuses();
+};
+
+export default { findProjects, findAllCategories, findAllStatuses };

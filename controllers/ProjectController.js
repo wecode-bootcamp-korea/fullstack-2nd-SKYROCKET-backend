@@ -32,4 +32,24 @@ const findProjects = async (req, res) => {
   }
 };
 
-export default { findProjects };
+const findAllCategories = async (req, res) => {
+  try {
+    const categories = await ProjectService.findAllCategories();
+
+    res.status(200).json({ message: 'SUCCESS_GET_CATEGORIES', categories });
+  } catch (err) {
+    res.status(err.statusCode || 500).json({ message: err.message });
+  }
+};
+
+const findAllStatuses = async (req, res) => {
+  try {
+    const statuses = await ProjectService.findAllStatuses();
+
+    res.status(200).json({ message: 'SUCCESS_GET_STATUSES', statuses });
+  } catch (err) {
+    res.status(err.statusCode || 500).json({ message: err.message });
+  }
+};
+
+export default { findProjects, findAllCategories, findAllStatuses };
