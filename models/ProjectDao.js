@@ -1,5 +1,81 @@
 import prisma from '../prisma';
 
+const getProjectDetail = async (id) => {
+  return await prisma.project.findMany({
+    where: {
+      id,
+    },
+    select: {
+      id: true,
+      name: true,
+      openDate: true,
+      endDate: true,
+      achievedAmount: true,
+      goalAmount: true,
+      paymentDate: true,
+      description: true,
+      categories: {
+        select: {
+          id: true,
+          koreanName: true,
+        },
+      },
+      creators: {
+        select: {
+          users: {
+            select: {
+              id: true,
+              nickname: true,
+              profileImageUrl: true,
+              userIntroduction: true,
+            },
+          },
+        },
+      },
+      images: {
+        select: {
+          projectThumbnailUrl: true,
+          detailImageUrl: true,
+        },
+      },
+      options: {
+        select: {
+          optionName: true,
+          optionDetail: true,
+          price: true,
+        },
+      },
+    },
+  });
+};
+
+const pledges = async (id) => {
+  const findByProjectId = await prisma.pledge.findMany({
+    where: {
+      options: {
+        projectId: {
+          equals: id,
+        },
+      },
+    },
+    select: {
+      optionId: true,
+      userId: true,
+    },
+  });
+  return findByProjectId;
+};
+
+const countAllBackers = async (id) => {
+  return await prisma.pledge.count({
+    where: {
+      options: {
+        projectId: id,
+      },
+    },
+  });
+};
+
 const getProjects = async (offset = 0, limit = 9, categoryId, statusId) => {
   let queryArgs = {};
 
@@ -114,4 +190,7 @@ export default {
   getStatusId,
   getAllCategories,
   getAllStatuses,
+  getProjectDetail,
+  pledges,
+  countAllBackers,
 };
