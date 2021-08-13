@@ -107,7 +107,7 @@
 ### 7. 상품 리스트 API
 
 - Prisma 순정 쿼리문을 적용하여 구현
-- 쿼리 스트링으로 받은 offset, limit, category, status라는 3개의 옵션을 고려하여 상품 리스트 정보의 필터링 구현
+- 쿼리 스트링으로 받은 `offset`, `limit`, `category`, `status` 4개의 옵션을 고려하여 상품 리스트 정보의 필터링 구현
   - `req.query`의 값이 존재하지 않을 시, 모든 상품 출력
   - 인피니트 스크롤을 고려하여 `req.query.offset`, `req.query.limit`값을 이용하여 `take`, `skip` 설정
   - `req.query.category`값을 사용하여 카테고리별 상품 출력
