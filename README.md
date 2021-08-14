@@ -98,13 +98,30 @@
 
 ### 3. 카카오 소셜 로그인/회원가입 API
 
+- 라이브러리를 사용하지 않고 구현
+
 ### 4. 일반 로그인 API
+
+- Prisma ORM을 적용하여 구현
+- jest, SuperTest를 활용하여 유닛테스트 실행
 
 ### 5. 일반 회원가입 API
 
+- jest, SuperTest를 활용하여 유닛테스트 실행
+
 ### 6. Access Token 인가 Middleware
 
-### 7. 상품 리스트 API
+- Token을 복호화하여 얻은 유저 정보로 해당 유저가 DB에 존재하는 유저인지 조회
+- 존재하는 유저라면 request로 복호화된 유저 정보를 전달, 존재하지 않는 유저라면 `INVALID_USER` 출력
+- 유효하지 않거나 만료된 토큰일 경우 `INVALID_TOKEN`출력
+
+### 7. 상품 상세정보 API
+
+- Prisma로 뽑아낸 결과 데이터 객체를 `map` 메소드를 이용하여 성형
+- Path Parameters를 이용해 RESTful하게 구현
+  - 상품의 id를 `req.params`로 받아와서
+
+### 8. 상품 리스트 API
 
 - Prisma 순정 쿼리문을 적용하여 구현
 - 쿼리 스트링으로 받은 offset, limit, category, status라는 3개의 옵션을 고려하여 상품 리스트 정보의 필터링 구현
@@ -114,7 +131,6 @@
   - `req.query.status`값을 사용하여 펀딩 상태별 상품 출력
   - 정규표현식을 이용하여, `req.query`로 받은 값이 정수가 아닐 경우 에러 출력
   - `req.query`로 받은 값이 유효하지 않거나 올바르지 않을 시 에러 핸들링
-  -
 - Prisma로 만들어진 결과 데이터 객체를 `map` 메소드를 이용하여 성형
 - jest, SuperTest를 활용하여 유닛 테스트 실행
   - project.test.js 내부의 test 실행 전, `prisma create` 구문을 사용하여 테스트 DB에 데이터를 추가하는 코드 구현
@@ -123,7 +139,7 @@
     - 1 : 성공 (원하는 input이 들어왔을 때)
     - -1 : 유효하지 않은 input
 
-### 8. 상품 카테고리 API
+### 9. 상품 카테고리 API
 
 - 상품의 카테고리 정보를 출력
 - Prisma로 만들어진 결과 데이터 객체를 `reduce` 메소드를 이용하여 성형
@@ -131,14 +147,14 @@
   - project.test.js 내부의 test 실행 전, prisma create 구문을 사용하여 테스트 DB에 데이터를 추가하는 코드 구현
   - test 종료 후, 테스트 DB 내의 데이터 삭제 및 테스트 DB 접속을 disconnect
 
-### 9. 상품 상태 API
+### 10. 상품 상태 API
 
 - 상품의 펀딩 상태 정보를 출력
 - jest, SuperTest를 활용하여 유닛 테스트 실행
   - project.test.js 내부의 test 실행 전, prisma create 구문을 사용하여 테스트 DB에 데이터를 추가하는 코드 구현
   - test 종료 후, 테스트 DB 내의 데이터 삭제 및 테스트 DB 접속을 disconnect
 
-### 10. 에러 Error Generator
+### 11. 에러 Error Generator
 
 - 에러 발생 시, 클라이언트로 에러 메시지와 상태 코드를 Throw시키는 에러 출력 로직을 모듈화하여 중복 코드를 줄임
 

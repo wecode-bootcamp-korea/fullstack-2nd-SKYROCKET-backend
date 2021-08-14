@@ -2,7 +2,6 @@ import { ProjectService } from '../services';
 import errorGenerator from '../utils/errorGenerator';
 
 const getProject = async (req, res) => {
-  console.log(await ProjectService.getDetail(Number(req.params.id)));
   try {
     const { id } = req.params;
     const { totalBackers, detailData } = await ProjectService.getDetail(
