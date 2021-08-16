@@ -96,15 +96,57 @@
 - Prisma를 사용하여 mySQL DB 모델 생성
 - DB에 데이터를 일괄 삽입하기 위해 csv 파일, dataUploader.js 활용
 
-### 3. 카카오 소셜 로그인/회원가입 API
+### 3. 카카오 소셜 로그인 API
+
+- Prisma ORM을 적용하여 구현
+- 카카오 API를 사용해 로그인 및 회원가입을 진행
+- 클라이언트(Front-end)로부터 받은 access token으로 카카오 API를 호출하여 유저 정보를 요청함
+- 카카오로부터 받아온 유저 정보가 DB에 저장된 유저이면 바로 로그인을 진행함과 동시에 토큰을 클라이언트로 전달
+- DB에 저장되지 않은 유저는 회원가입을 진행한 후에 백엔드 토큰을 클라이언트로 전달
 
 ### 4. 일반 로그인 API
 
+- Prisma ORM을 적용하여 구현
+- JSON WEB TOKEN을 활용해 유저 로그인 시에 토큰을 발행
+- Request를 보낸 이메일과 비밀번호를 DB에 저장된 이메일과 암호화된 비밀번호와 비교하여 일치할 시에 토큰을 발행. 이메일과 비밀번호가 하나라도 일치하지 않을 시에 에러를 출력
+- 필수로 입력해야하는 request의 항목이 공란일 때 `KEY ERROR: `을 출력
+- jest, SuperTest를 활용하여 유닛테스트 실행
+  - test를 실행하기 이전에 `prisma create`구문을 사용해 테스트 DB에 데이터를 추가하는 코드 구현
+  - test 종료 후, 테스트 DB 내의 데이터 삭제 및 테스트 DB 접속을 disconnect
+  - 세가지 테스트 케이스 구현
+    - 1 : 성공(성공적으로 로그인이 되고, 토큰이 발급됨)
+    - 0 : Input이 존재하지 않을 때
+    - -1 : 실패(request를 보낸 이메일과 비밀번호가 DB에 존재하는 정보와 일치하지 않음)
+
 ### 5. 일반 회원가입 API
+
+- Prisma ORM을 적용하여 구현
+- Request의 항목에 입력을 했을 때 `create`메서드를 사용해 이메일, 솔팅 및 해싱이 된 비밀번호, 닉네임 등의 정보를 DB에 저장
+- 성공했을 시, `SUCCESS`메시지와 유저의 이메일을 출력
+- 회원가입을 진행할 때, DB에 이미 존재하는 유저 이메일로 가입을 시도했을 시, 에러를 출력
+- 필수로 입력해야하는 request의 항목이 공란일 때 `KEY ERROR: `을 출력
+- jest, SuperTest를 활용하여 유닛테스트 실행
+  - test 종료 후, 테스트 DB 내의 데이터 삭제
+  - 세가지 테스트 케이스 구현
+    - 1 : 성공(입력한 정보가 DB에 저장이 되고, response가 성공적으로 이루어짐)
+    - 0 : Input이 존재하지 않을 때
+    - -1 : 실패(이미 존재하는 이메일을 request 보냄)
 
 ### 6. Access Token 인가 Middleware
 
-### 7. 상품 리스트 API
+- Token을 복호화하여 얻은 유저 정보로 해당 유저가 DB에 존재하는 유저인지 조회
+- 존재하는 유저라면 request로 복호화된 유저 정보를 전달, 존재하지 않는 유저라면 `INVALID_USER` 출력
+- 유효하지 않거나 만료된 토큰일 경우 `INVALID_TOKEN`출력
+
+### 7. 상품 상세정보 API
+
+- Prisma ORM을 적용하여 구현
+- Prisma로 뽑아낸 결과 데이터를 `map` 메소드를 이용하여 성형
+- Path Parameters를 이용해 RESTful하게 구현
+  - 상품의 id를 `req.params`로 받아와서 특정 상품만 출력하도록 구현
+  - DB에 존재하지 않는 상품의 id가 유효하지 않을 시 `INVALID_PROJECT`출력
+
+### 8. 상품 리스트 API
 
 - Prisma 순정 쿼리문을 적용하여 구현
 - 쿼리 스트링으로 받은 `offset`, `limit`, `category`, `status` 4개의 옵션을 고려하여 상품 리스트 정보의 필터링 구현
@@ -114,7 +156,6 @@
   - `req.query.status`값을 사용하여 펀딩 상태별 상품 출력
   - 정규표현식을 이용하여, `req.query`로 받은 값이 정수가 아닐 경우 에러 출력
   - `req.query`로 받은 값이 유효하지 않거나 올바르지 않을 시 에러 핸들링
-  -
 - Prisma로 만들어진 결과 데이터 객체를 `map` 메소드를 이용하여 성형
 - jest, SuperTest를 활용하여 유닛 테스트 실행
   - project.test.js 내부의 test 실행 전, `prisma create` 구문을 사용하여 테스트 DB에 데이터를 추가하는 코드 구현
@@ -123,7 +164,7 @@
     - 1 : 성공 (원하는 input이 들어왔을 때)
     - -1 : 유효하지 않은 input
 
-### 8. 상품 카테고리 API
+### 9. 상품 카테고리 API
 
 - 상품의 카테고리 정보를 출력
 - Prisma로 만들어진 결과 데이터 객체를 `reduce` 메소드를 이용하여 성형
@@ -131,14 +172,14 @@
   - project.test.js 내부의 test 실행 전, prisma create 구문을 사용하여 테스트 DB에 데이터를 추가하는 코드 구현
   - test 종료 후, 테스트 DB 내의 데이터 삭제 및 테스트 DB 접속을 disconnect
 
-### 9. 상품 상태 API
+### 10. 상품 상태 API
 
 - 상품의 펀딩 상태 정보를 출력
 - jest, SuperTest를 활용하여 유닛 테스트 실행
   - project.test.js 내부의 test 실행 전, prisma create 구문을 사용하여 테스트 DB에 데이터를 추가하는 코드 구현
   - test 종료 후, 테스트 DB 내의 데이터 삭제 및 테스트 DB 접속을 disconnect
 
-### 10. 에러 Error Generator
+### 11. 에러 Error Generator
 
 - 에러 발생 시, 클라이언트로 에러 메시지와 상태 코드를 Throw시키는 에러 출력 로직을 모듈화하여 중복 코드를 줄임
 
